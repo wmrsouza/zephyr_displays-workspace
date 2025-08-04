@@ -13,6 +13,14 @@
 	aliases {
 	};
 
+	lvgl_pointer {
+			compatible = "zephyr,lvgl-pointer-input";
+			input = <&xpt2046>;
+			swap-xy;
+			#invert-x;
+			invert-y;
+	};
+
 	mipi_dbi {
 		compatible = "zephyr,mipi-dbi-spi";
 		write-only;
@@ -36,16 +44,17 @@
 			duplex = <SPI_FULL_DUPLEX>;
 			width = <320>;
 			height = <240>;
-			rotation = <90>;
+			rotation = <270>;
 			pixel-format = <0>;
-			/*display-inversion;*/
+			display-inversion;
 		};
 	};
 };
 
 &spim2_default {
 	group1 {
-		pinmux = <SPIM2_SCLK_GPIO1>;
+		pinmux = <SPIM2_SCLK_GPIO1>,
+			 <SPIM2_MISO_GPIO15>;
 	};
 	group2 {
 		pinmux = <SPIM2_MOSI_GPIO2>;
@@ -58,6 +67,22 @@
 
 	pinctrl-0 = <&spim2_default>;
 	pinctrl-names = "default";
-	cs-gpios = <&gpio0 6 GPIO_ACTIVE_LOW>;
+	cs-gpios = <&gpio0 6 GPIO_ACTIVE_LOW>,
+	           <&gpio0 7 GPIO_ACTIVE_LOW>;
+	
+	xpt2046: xpt2046@1 {
+		reg = <1>;
+		compatible = "xptek,xpt2046";
+		spi-max-frequency = <2000000>;
+		int-gpios = <&gpio0 16 (GPIO_ACTIVE_LOW | GPIO_PULL_UP)>;
+		touchscreen-size-x = <320>;
+		touchscreen-size-y = <240>;
+		min-x = <1350>;
+		max-x = <3850>;
+		min-y = <250>;
+		max-y = <3300>;
+		z-threshold = <750>;
+		reads = <10>;
+	};
 };
 
