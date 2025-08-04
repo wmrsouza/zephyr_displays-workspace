@@ -5,8 +5,48 @@
 		zephyr,shell-uart = &uart0;
 		zephyr,flash = &flash0;
 		zephyr,code-partition = &slot0_partition;
+		zephyr,display = &display_128x64;
 	};
 
 	aliases {
 	};
 };
+
+&i2c0_default {
+	group1 {
+		pinmux = <I2C0_SDA_GPIO1>,
+			 <I2C0_SCL_GPIO2>;
+		bias-pull-up;
+		drive-open-drain;
+		output-high;
+	};
+};
+
+&i2c0 {
+	status = "okay";
+	  
+	clock-frequency = <I2C_BITRATE_FAST_PLUS>;
+	pinctrl-0 = <&i2c0_default>;
+	pinctrl-names = "default";
+
+	display_128x64: sh1106@3c {
+		compatible = "sinowealth,sh1106";
+		status = "okay";
+		reg = <0x3c>;
+		width = <128>;
+		height = <64>;
+		segment-offset = <2>;
+		page-offset = <0>;
+		display-offset = <0>;
+		multiplex-ratio = <63>;
+		segment-remap;
+		com-invdir;
+		/*com-sequential;*/
+		prechargep = <34>;
+		/*reset-gpios = <>;*/
+		/*inversion-on;*/
+		ready-time-ms = <10>;
+		use-internal-iref;
+	};
+};
+
