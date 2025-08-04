@@ -1,0 +1,12 @@
+sample:
+  description: Display sample application
+  name: display-sample-application 
+common:
+  build_only: true
+  integration_platforms:
+    - esp32s3_devkitc_procpu
+tests:
+  app.default: {}
+  app.debug:
+    extra_overlay_confs:
+      - debug.conf
