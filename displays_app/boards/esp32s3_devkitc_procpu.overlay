@@ -7,10 +7,39 @@
 		zephyr,shell-uart = &uart0;
 		zephyr,flash = &flash0;
 		zephyr,code-partition = &slot0_partition;
-		zephyr,display = &display_128x64;
+		zephyr,display = &display_320x240;
 	};
 
 	aliases {
+	};
+
+	mipi_dbi {
+		compatible = "zephyr,mipi-dbi-spi";
+		write-only;
+		spi-dev = <&spi2>;
+		dc-gpios = <&gpio0 5 GPIO_ACTIVE_HIGH>;
+		reset-gpios = <&gpio0 4 GPIO_ACTIVE_LOW>;
+		#address-cells = <1>;
+		#size-cells = <0>;
+
+		display_320x240: ili9341@0 {
+			compatible = "ilitek,ili9341";
+			status = "okay";
+			reg = <0>;
+			mipi-max-frequency = <DT_FREQ_M(25)>;
+			mipi-mode = "MIPI_DBI_MODE_SPI_4WIRE";
+			/*mipi-cpol;*/
+			/*mipi-cpha;*/
+			/*mipi-hold-cs;*/
+			te-mode = "MIPI_DBI_TE_NO_EDGE";
+			te-delay = <0>;
+			duplex = <SPI_FULL_DUPLEX>;
+			width = <320>;
+			height = <240>;
+			rotation = <90>;
+			pixel-format = <0>;
+			/*display-inversion;*/
+		};
 	};
 };
 
@@ -26,35 +55,9 @@
 
 &spi2 {
 	status = "okay";
-	  
+
 	pinctrl-0 = <&spim2_default>;
 	pinctrl-names = "default";
 	cs-gpios = <&gpio0 6 GPIO_ACTIVE_LOW>;
-
-	display_128x64: ssd1309@0 {
-		compatible = "solomon,ssd1309fb";
-		status = "okay";
-		reg = <0>;
-		spi-max-frequency = <DT_FREQ_M(10)>;
-		duplex = <SPI_FULL_DUPLEX>;
-		frame-format = <SPI_FRAME_FORMAT_MOTOROLA>;
-		/*spi-cpol;*/
-		/*spi-cpha;*/
-		width = <128>;
-		height = <64>;
-		segment-offset = <0>;
-		page-offset = <0>;
-		display-offset = <0>;
-		multiplex-ratio = <63>;
-		segment-remap;
-		com-invdir;
-		/*com-sequential;*/
-		prechargep = <34>;
-		reset-gpios = <&gpio0 4 GPIO_ACTIVE_LOW>;
-		inversion-on;
-		ready-time-ms = <100>;
-		use-internal-iref;
-		data-cmd-gpios = <&gpio0 5 GPIO_ACTIVE_HIGH>;
-	};
 };
 
